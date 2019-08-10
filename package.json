@@ -1,0 +1,23 @@
+{
+  "name": "GreatBay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "greatbay.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Soheila-Lotfi/GreatBay.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Soheila-Lotfi/GreatBay/issues"
+  },
+  "homepage": "https://github.com/Soheila-Lotfi/GreatBay#readme",
+  "dependencies": {
+    "inquirer": "^6.5.0"
+  }
+}
