@@ -27,7 +27,7 @@ function start() {
       console.log(answers.Your_choice);
       if (answers.Your_choice === "post an item") {
         postAuction();
-      } else if (answers.Your_choice === "bid an item") {
+      } else if (answers.Your_choice === "bid on an item") {
         bidAuction();
       } else {
         connection.end();
@@ -74,28 +74,28 @@ function postAuction() {
 }
 
 function bidAuction() {
-  inquirer
-    .prompt([
-      {
-        name: "choice",
-        type: "rawlist",
-        choices: function() {
-          connection.query("SELECT * FROM auctions", function(err, res) {
-            if (err) throw err;
+  connection.query("SELECT * FROM auctions", function(err, res) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "choice",
+          type: "rawlist",
+          choices: function() {
             var arrayChoices = [];
             for (i = 0; i < res.length; i++) {
-              arrayChoices.push(res.item_name);
+              arrayChoices.push(res[i].item_name);
             }
             return arrayChoices;
-          });
+          },
+          message: "What auction would you like to place a bid in?"
         },
-        message: "What auction would you like to place a bid in?"
-      },
-      {
-        name: "bid",
-        type: "input",
-        message: "How much would you like to bid?"
-      }
-    ])
-    .then(function(answers) {});
+        {
+          name: "bid",
+          type: "input",
+          message: "How much would you like to bid?"
+        }
+      ])
+      .then(function(answers) {});
+  });
 }
