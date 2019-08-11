@@ -106,7 +106,16 @@ function bidAuction() {
           }
         }
 
-        if (anwers.bid > chosenItem.highest_bid) {
+        if (parseFloat(answers.bid) > chosenItem.highest_bid) {
+          connection.query(
+            "UPDATE auctions SET= ? WHERE ?",
+            [{ highest_bid: parseFloat(answers.bid) }, { id: chosenItem.id }],
+            function(err) {
+              if (err) throw err;
+              console.log("Bid Placed successfully!");
+              start();
+            }
+          );
         }
       });
   });
