@@ -5,26 +5,37 @@ var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  passwoed: "Leila@1357",
+  password: "Leila@1357",
   database: "greatBay_DB"
 });
 
-inquirer
-  .prompt([
-    {
-      type: "list",
-      name: "Your_choice",
-      choices: ["post an item", "bid on an item"]
-    }
-  ])
-  .then(function(answers) {
-    console.log(answers.Your_choice);
-    if (answers.Your_choice === "post an item") {
-      itemInformation();
-    }
-  });
+connection.connect(function(err) {
+  if (err) throw err;
+  start();
+});
 
-function itemInformation() {
+function start() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "Your_choice",
+        choices: ["post an item", "bid on an item", "Exit"]
+      }
+    ])
+    .then(function(answers) {
+      console.log(answers.Your_choice);
+      if (answers.Your_choice === "post an item") {
+        postAuction();
+      } else if (answers.Your_choice === "bid an item") {
+        bidAuction();
+      } else {
+        connection.end();
+      }
+    });
+}
+
+function postAuction() {
   inquirer
     .prompt([
       {
@@ -41,24 +52,17 @@ function itemInformation() {
     .then(function(userInput) {
       var itemName = userInput.item_name;
       var itemCategory = userInput.item_category;
-      postItem(itemName, itemCategory);
+      var query = connection.query(
+        "INSERT INTO auctions SET ?",
+        {
+          item_name: itemName,
+          category: itemCategory
+        },
+        function(err, res) {
+          if (err) throw err;
+        }
+      );
     });
-}
-function postItem(itemName, itemCategory) {
-  connection.connect(function(err) {
-    if (err) throw err;
-    connection.query(
-      "INSERT INTO auctions SET ?",
-      {
-        item_name: itemName,
-        category: itemCategory
-      },
-      function(err, res) {
-        if (err) throw err;
-        connection.end();
-      }
-    );
-  });
 }
 
 //If the user selects "POST AN ITEM" they are prompted for an assortment of information regarding the item
