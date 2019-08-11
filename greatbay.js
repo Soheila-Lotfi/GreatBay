@@ -58,13 +58,15 @@ function postAuction() {
       var itemName = userInput.item_name;
       var itemCategory = userInput.item_category;
       var startingBid = userInput.starting_bid;
+      var highest_bid = userInput.starting_bid;
 
       var query = connection.query(
         "INSERT INTO auctions SET ?",
         {
           item_name: itemName,
           category: itemCategory,
-          starting_bid: startingBid
+          starting_bid: startingBid,
+          highest_bid: highest_bid
         },
         function(err, res) {
           if (err) throw err;
@@ -96,6 +98,16 @@ function bidAuction() {
           message: "How much would you like to bid?"
         }
       ])
-      .then(function(answers) {});
+      .then(function(answers) {
+        var chosenItem;
+        for (i = 0; i < res.length; i++) {
+          if (res[i] === answers.choice) {
+            chosenItem.push(res[i]);
+          }
+        }
+
+        if (anwers.bid > chosenItem.highest_bid) {
+        }
+      });
   });
 }
