@@ -47,16 +47,24 @@ function postAuction() {
         type: "input",
         name: "item_category",
         message: "what is the item's category?"
+      },
+      {
+        type: "input",
+        name: "starting_bid",
+        message: "What would you like your starting bid to be?"
       }
     ])
     .then(function(userInput) {
       var itemName = userInput.item_name;
       var itemCategory = userInput.item_category;
+      var startingBid = userInput.starting_bid;
+
       var query = connection.query(
         "INSERT INTO auctions SET ?",
         {
           item_name: itemName,
-          category: itemCategory
+          category: itemCategory,
+          starting_bid: startingBid
         },
         function(err, res) {
           if (err) throw err;
@@ -65,5 +73,21 @@ function postAuction() {
     });
 }
 
-//If the user selects "POST AN ITEM" they are prompted for an assortment of information regarding the item
-//and then that information is added to the database so that others can bid on it
+function bidAuction() {
+  inquirer.prompt([
+    {
+      name: "choice",
+      type: "rawlist",
+      choices: function() {
+        connection.query("SELECT * FROM auctions", function(err, res) {
+          if (err) throw err;
+          var arrayChoices = [];
+          for (i = 0; i < res.length; i++) {
+            arrayChoices.push(res.item_name);
+          }
+          return arrayChoices;
+        });
+      }
+    }
+  ]);
+}
