@@ -58,18 +58,22 @@ function postAuction() {
       var itemName = userInput.item_name;
       var itemCategory = userInput.item_category;
       var startingBid = userInput.starting_bid;
-      var highest_bid = userInput.starting_bid;
+      var highestBid = userInput.starting_bid;
 
       var query = connection.query(
         "INSERT INTO auctions SET ?",
         {
           item_name: itemName,
           category: itemCategory,
-          starting_bid: startingBid,
-          highest_bid: highest_bid
+          starting_bid: startingBid || 0,
+          highest_bid: highestBid || 0
         },
         function(err, res) {
           if (err) throw err;
+          console.log("Your auction was created successfully!");
+
+          // re-prompt the user for if they want to bid or post
+          start();
         }
       );
     });
@@ -82,7 +86,7 @@ function bidAuction() {
       .prompt([
         {
           name: "choice",
-          type: "rawlist",
+          type: "list",
           choices: function() {
             var arrayChoices = [];
             for (i = 0; i < res.length; i++) {
@@ -99,23 +103,34 @@ function bidAuction() {
         }
       ])
       .then(function(answers) {
-        var chosenItem;
+        var chosenItem = [];
+        // console.log(answers.choice);
+        // console.log(res[1]);
         for (i = 0; i < res.length; i++) {
-          if (res[i] === answers.choice) {
+          if (res[i].item_name === answers.choice) {
             chosenItem.push(res[i]);
+            console.log(chosenItem[0].highest_bid);
+            console.log(answers.bid);
           }
         }
 
-        if (parseFloat(answers.bid) > chosenItem.highest_bid) {
+        if (parseFloat(answers.bid) > parseFloat(chosenItem[0].highest_bid)) {
           connection.query(
-            "UPDATE auctions SET= ? WHERE ?",
-            [{ highest_bid: parseFloat(answers.bid) }, { id: chosenItem.id }],
+            "UPDATE auctions SET ? WHERE ?",
+            [
+              { highest_bid: parseFloat(answers.bid) },
+              { id: chosenItem[0].id }
+            ],
+
             function(err) {
               if (err) throw err;
               console.log("Bid Placed successfully!");
               start();
             }
           );
+        } else {
+          console.log("Your bid is low, try again..");
+          start();
         }
       });
   });
